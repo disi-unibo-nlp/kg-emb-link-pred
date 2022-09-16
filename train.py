@@ -5,6 +5,7 @@ import torch.nn.functional as F
 
 from models import RGCNEncoder, DistMultDecoder
 from ogb.linkproppred import PygLinkPropPredDataset
+from tqdm import tqdm
 
 
 def main():
@@ -33,11 +34,14 @@ def main():
     edge_type = torch.cat((train_triples['relation'], valid_triples['relation'], test_triples['relation']))
 
     for epoch in range(1, 10001):
-        loss = train(model, train_triples, edge_index, edge_type, device)
+        loss = train(model, train_triples, edge_index, edge_type, num_nodes, device)
         print(f'Epoch: {epoch:05d}, Loss: {loss:.4f}')
         if (epoch % 500) == 0:
-            valid_mrr, test_mrr = test()
-            print(f'Val MRR: {valid_mrr:.4f}, Test MRR: {test_mrr:.4f}')
+            valid_mrr = test(model, edge_index, edge_type, valid_triples)
+            print(f'Val MRR: {valid_mrr:.4f}')
+
+    test_mrr = test(model, edge_index, edge_type, test_triples)
+    print(f'Test MRR: {test_mrr:.4f}')
 
 
 def negative_sampling(edge_index, num_nodes):
@@ -82,14 +86,15 @@ def train(model, train_triples, edge_index, edge_type, num_nodes, device):
 
 
 @torch.no_grad()
-def test():
+def test(model, edge_index, edge_type, test_triples):
     model.eval()
-    z = model.encode(data.edge_index, data.edge_type)
+    test_edge_index = torch.stack((test_triples['head'], test_triples['tail']))
+    test_edge_type = test_triples['relation']
+    z = model.encode(edge_index, edge_type)
 
-    valid_mrr = compute_mrr(z, data.valid_edge_index, data.valid_edge_type)
-    test_mrr = compute_mrr(z, data.test_edge_index, data.test_edge_type)
+    test_mrr = compute_mrr(z, test_edge_index, test_edge_type)
 
-    return valid_mrr, test_mrr
+    return test_mrr
 
 
 @torch.no_grad()

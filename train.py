@@ -94,7 +94,7 @@ def train(model, edge_index, edge_type, train_edge_index, train_edge_type, val_t
                                   patience=5)
     model.train()
     
-    for epoch in range(1, 90):
+    for epoch in range(1, 200:
 
         pgb = tqdm(DataLoader(range(num_train_edges), batch_size, shuffle=True), leave=False)
 

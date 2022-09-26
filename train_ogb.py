@@ -1,5 +1,5 @@
 import torch
-from torch_geometric.nn import GAE, GAT
+from torch_geometric.nn import GAE
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
 from torch.optim.lr_scheduler import ReduceLROnPlateau
@@ -68,7 +68,6 @@ def main():
     test_mrr_value = torch.mean(torch.stack(test_mrr_list))
 
     print(f'Test MRR: {test_mrr_value:.4f}')
-
 
 
 def negative_sampling(edge_index, num_nodes, device):
@@ -147,7 +146,7 @@ def train(model, edge_index, edge_type, train_edge_index, train_edge_type, val_t
 def test(model, edge_index, edge_type, test_triples, device):
     
     batch_size = 1024
-    evaluator = Evaluator(name = "ogbl-biokg")
+    evaluator = Evaluator(name="ogbl-biokg")
     model.eval()
 
     z = model.encode(edge_index, edge_type)

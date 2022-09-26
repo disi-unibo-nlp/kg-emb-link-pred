@@ -1,6 +1,8 @@
 datasets
 __pycache__
 .idea/
+.DS_Store
 wandb
 checkpoints
 train.sh
+code_scratches.py

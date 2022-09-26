@@ -1,2 +1,4 @@
 ogb
 tqdm
+codecarbon
+wandb

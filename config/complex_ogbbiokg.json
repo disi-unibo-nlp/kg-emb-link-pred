@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "title": "ComplEx",
+    "origin": "Learn Ogb-bioKG Dataset with ComplEx as described in the example performed by OGB team",
+	"comments": "Could not find batch size and number of epochs. Set to 100, given the number of tstep"
+  },
+  "pipeline": {
+    "dataset": "ogbbiokg",
+    "dataset_kwargs": {
+      "cache_root": "/home/ferrari/kge_pykeen/src/"
+    },
+    "model": "ComplEx",
+    "model_kwargs": {
+      "embedding_dim": 2000,
+      "entity_initializer": "xavier_uniform",
+      "relation_initializer": "xavier_uniform"
+    },
+    "regularizer": "Lp",
+    "regularizer_kwargs": {
+      "apply_only_once": false,
+      "weight": 0.000002,
+      "p": 2.0,
+      "normalize": false
+    },
+	"optimizer": "Adam", 
+    "optimizer_kwargs": {
+      "lr": 0.001 
+    },
+    "loss": "nssa",   
+    "loss_kwargs": {
+      "reduction": "mean",
+      "adversarial_temperature": 1.0,
+      "margin": 500
+    },
+    "training_loop": "SLCWA",
+    "negative_sampler": "basic",
+    "negative_sampler_kwargs": {
+      "num_negs_per_pos": 128
+    },
+    "training_kwargs": {
+      "num_epochs": 100,
+      "batch_size": 512
+    },
+    "evaluator_kwargs": {
+      "filtered": true
+    }
+  }
+}

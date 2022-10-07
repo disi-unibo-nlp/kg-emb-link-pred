@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "title": "TransE",
+    "origin": "Learn FB15K Dataset with TransE using the hyperparameter used in fb15k",
+	"comments": "batch_size is not mentioned in the paper. We found out that this value works. um_epochs varies from the value reported in the paper. We found out that these values work."
+  },
+  "pipeline": {
+    "dataset": "yago310",
+    "dataset_kwargs": {
+      "cache_root": "/home/ferrari/kge_pykeen/src/"
+    },
+    "model": "TransE",
+    "model_kwargs": {
+      "embedding_dim": 50,
+      "scoring_fct_norm": 1,
+      "entity_initializer": "xavier_uniform",
+      "relation_initializer": "xavier_uniform",
+      "entity_constrainer": "normalize"
+    },
+    "optimizer": "SGD",
+    "optimizer_kwargs": {
+      "lr": 0.01
+    },
+    "loss": "MarginRankingLoss",
+    "loss_kwargs": {
+      "reduction": "mean",
+      "margin": 1
+    },
+    "training_loop": "SLCWA",
+    "negative_sampler": "basic",
+    "negative_sampler_kwargs": {
+      "num_negs_per_pos": 1
+    },
+    "training_kwargs": {
+      "num_epochs": 1000,
+      "batch_size": 256  
+    },
+    "evaluator_kwargs": {
+      "filtered": true
+    }
+  }
+}

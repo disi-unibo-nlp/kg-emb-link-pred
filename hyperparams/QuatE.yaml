@@ -1,0 +1,30 @@
+model_name: "QuatE"
+datasets:
+  - dataset: "yago3-10"
+    parameters:
+      learning_rate: 0.1
+      l1_flag: True
+      hidden_size: 100
+      batch_size: 100
+      epochs: 1000
+      margin: 1.0
+      optimizer: "adagrad"
+      sampling: "bern"
+      neg_rate: 1
+      lmbda: 0.1
+      alpha: 0.1
+      patience: 100
+  
+  - dataset: "ogbl.biokg"
+    parameters:
+      learning_rate: 0.0001
+      hidden_size: 2000
+      batch_size: 512
+      epochs: 100
+      margin: 20.00
+      optimizer: "adam"
+      sampling: "bern"
+      alpha: 1.0
+      lmbda: 0.1
+      neg_rate: 4
+      patience: 100

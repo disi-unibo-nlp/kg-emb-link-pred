@@ -3,8 +3,8 @@ import os
 
 from pykeen.pipeline import pipeline_from_path
 
-model_name = "TransE"
-dataset_name = "FB15k"
+model_name = sys.argv[1]
+dataset_name = sys.argv[2]
 
 result = pipeline_from_path(
   path = "./config/"+model_name.lower()+"_"+dataset_name.lower()+".json",

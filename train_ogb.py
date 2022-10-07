@@ -14,9 +14,9 @@ from models import DistMultDecoder, GNNEncoder
 from ogb.linkproppred import PygLinkPropPredDataset, Evaluator
 from tqdm import tqdm
 
-INPUT_CHANNELS = 150
-HIDDEN_CHANNELS = 150
-OUTPUT_CHANNELS = 150
+INPUT_CHANNELS = 500
+HIDDEN_CHANNELS = 500
+OUTPUT_CHANNELS = 500
 
 
 def main():
@@ -41,6 +41,7 @@ def main():
                    output_channels=OUTPUT_CHANNELS, num_relations=num_relations, gnn_model=args.encoder),
         DistMultDecoder(num_relations, input_channels=INPUT_CHANNELS),
     )
+    
     if torch.cuda.is_available():
         model.cuda()
 
@@ -50,8 +51,7 @@ def main():
     dataset_tail = torch.cat((train_triples['tail'], val_triples['tail'], test_triples['tail']))
     edge_index = torch.stack((dataset_head, dataset_tail)).to(device)
     edge_type = torch.cat((train_triples['relation'], val_triples['relation'], test_triples['relation'])).to(device)
-
-    # define edge_index and edge_type for each split
+    
     train_edge_index = torch.stack((train_triples['head'], train_triples['tail'])).to(device)
     train_edge_type = train_triples['relation'].to(device)
     
@@ -64,10 +64,22 @@ def main():
 
     emissions = tracker.stop()
     wandb.log({'Total CO2 emission (in Kg)': emissions})
-    test_mrr_list = test(model, edge_index, edge_type, test_triples, device)
+    test_mrr_list, test_hits1_list, test_hits3_list, test_hits10_list = test(model, edge_index, edge_type, test_triples, device)
     test_mrr_value = torch.mean(torch.stack(test_mrr_list))
+    test_hits1_value = torch.mean(torch.stack(test_hits1_list))
+    test_hits3_value = torch.mean(torch.stack(test_hits3_list))
+    test_hits10_value = torch.mean(torch.stack(test_hits10_list))
+    
 
     print(f'Test MRR: {test_mrr_value:.4f}')
+    print(f'Test hits@1: {test_hits1_value:.4f}')
+    print(f'Test hits@3: {test_hits3_value:.4f}')
+    print(f'Test hits@10: {test_hits10_value:.4f}')
+    wandb.log({'Test MRR': test_mrr_value,
+               'Test hits@1': test_hits1_value,
+               'Test hits@3': test_hits3_value,
+               'Test hits@10': test_hits10_value})
+    
 
 
 def negative_sampling(edge_index, num_nodes, device):
@@ -82,7 +94,7 @@ def negative_sampling(edge_index, num_nodes, device):
 
 
 def train(model, edge_index, edge_type, train_edge_index, train_edge_type, val_triples, num_nodes, num_train_edges, device):
-    ckpt_dir = 'checkpoints/rgcn'
+    ckpt_dir = f'checkpoints/ogb_{args.encoder}'
     if not exists(ckpt_dir):
         os.makedirs(ckpt_dir)
 
@@ -93,7 +105,7 @@ def train(model, edge_index, edge_type, train_edge_index, train_edge_type, val_t
                                   patience=5)
     model.train()
     
-    for epoch in range(1, 200:
+    for epoch in range(1, 101):
 
         pgb = tqdm(DataLoader(range(num_train_edges), batch_size, shuffle=True), leave=False)
 
@@ -119,15 +131,14 @@ def train(model, edge_index, edge_type, train_edge_index, train_edge_type, val_t
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
             optimizer.step()
             model.zero_grad()
-        
-        val_mrr_list = test(model, edge_index, edge_type, val_triples, device)
+        val_mrr_list, val_hits1_list, val_hits3_list, val_hits10_list = test(model, edge_index, edge_type, val_triples, device)
         val_mrr_value = torch.mean(torch.stack(val_mrr_list))
 
         print(f'Epoch: {epoch:05d}, Loss: {loss:.4f}, Val MRR: {val_mrr_value:.4f}')
 
-        if (epoch % 100) == 0:
+        if (epoch % 50) == 0:
             save_dict = {}
-            name = 'ckpt2-{}'.format(epoch)
+            name = 'ckpt-{}'.format(epoch)
             save_dict['state_dict'] = model.state_dict()
             save_dict['optimizer_state_dict'] = optimizer.state_dict()
             torch.save(save_dict, join(ckpt_dir, name))
@@ -158,6 +169,9 @@ def test(model, edge_index, edge_type, test_triples, device):
     pgb = tqdm(DataLoader(range(len(test_triples['head_type'])), batch_size, shuffle=True), leave=False)
     
     mrr_list = []
+    hits1_list = []
+    hits3_list = []
+    hits10_list = []
     for edge_id in pgb:
 
         pos_out = model.decode(z, test_edge_index[:, edge_id], test_edge_type[edge_id])
@@ -170,8 +184,11 @@ def test(model, edge_index, edge_type, test_triples, device):
 
         batch_results = evaluator.eval({'y_pred_pos': pos_out, 'y_pred_neg': neg_out})
         mrr_list.extend(batch_results['mrr_list'])
+        hits1_list.extend(batch_results['hits@1_list'])
+        hits3_list.extend(batch_results['hits@3_list'])
+        hits10_list.extend(batch_results['hits@10_list'])
     
-    return mrr_list
+    return mrr_list, hits1_list, hits3_list, hits10_list
 
 
 if __name__ == '__main__':

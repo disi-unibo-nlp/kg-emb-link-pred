@@ -30,7 +30,7 @@ python train_ogb.py --wanb_log
 python pykeen.py TransE ogbbiokg
 ```
 
-## Train and test QuatE DualE
+## Train and test QuatE and DualE
 
 ```
 python pykeen.py QuatE ogbbiokg

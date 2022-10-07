@@ -23,3 +23,15 @@ pip install torch-geometric
 ```
 python train_ogb.py --wanb_log
 ```
+
+## Train and test TransE, RotatE, DistMult, ComplEx, ConvE, and ConvKB 
+
+```
+python pykeen.py TransE ogbbiokg
+```
+
+## Train and test QuatE DualE
+
+```
+python pykeen.py QuatE ogbbiokg
+```

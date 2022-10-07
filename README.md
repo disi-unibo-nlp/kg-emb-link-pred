@@ -18,7 +18,7 @@ pip install torch-geometric
 ```
 
 
-## Train and Test R-GCN on OGB-BioKG
+## Train and test R-GCN on OGB-BioKG
 
 ```
 python train_ogb.py --wanb_log

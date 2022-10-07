@@ -33,5 +33,5 @@ python pykeen.py TransE ogbbiokg
 ## Train and test QuatE and DualE
 
 ```
-python pykeen.py QuatE ogbbiokg
+python pykg2vec.py QuatE ogbbiokg
 ```

@@ -35,3 +35,7 @@ python pykeen.py TransE ogbbiokg
 ```
 python pykg2vec.py QuatE ogbbiokg
 ```
+
+## License
+
+This project is released under the CC-BY-NC-SA 4.0 license (see `LICENSE`).

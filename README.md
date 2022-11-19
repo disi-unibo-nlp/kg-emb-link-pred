@@ -1,5 +1,4 @@
-# guess-the-link
-Guess The Link: Deciphering the Best Knowledge Graph Completion Techniques in Dense Spaces [MDPI Electronics - Graph Machine Learning]
+# Comprehensive Analysis of Knowledge Graph Embedding Techniques Benchmarked on Link Prediction
 
 ## Install requirements
 All the code has been tested with `python=3.6.10`

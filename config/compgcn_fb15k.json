@@ -1,0 +1,56 @@
+{
+  "metadata": {
+    "title": "CompGCN",
+    "origin":"Learn FB15k Dataset with CompGCN as described by ",
+    "comments": ""
+  },
+  "pipeline": {
+    "dataset": "fb15k",
+    "dataset_kwargs": {
+      "cache_root": "/home/ferrari/kge_pykeen/src/",
+      "create_inverse_triples": "True"
+    },
+    "model": "CompGCN",
+    "model_kwargs": {
+      "encoder_kwargs": {
+        "entity_representations":"embedding",
+        "entity_representations_kwargs":{
+          "initializer": "xavier_uniform",
+          "embedding_dim": 200
+        },
+        "relation_representations":"embedding",
+        "relation_representations_kwargs": {
+          "initializer": "xavier_uniform",
+          "embedding_dim": 200
+        },
+        "num_layers": 2,
+        "dims": 150,
+        "layer_kwargs": {
+          "dropout": 0.1,
+          "attention_dropout": 0.3
+        }
+      },      
+      "interaction": "DistMult"
+    },
+    "optimizer": "Adam",
+    "optimizer_kwargs": {
+      "lr": 0.001
+    },
+    "loss": "MarginRankingLoss",
+    "loss_kwargs": {
+      "margin": 40
+    },
+    "training_loop": "SLCWA",
+    "negative_sampler": "basic",
+    "negative_sampler_kwargs": {
+      "num_negs_per_pos": 1
+    },
+    "training_kwargs": {
+      "num_epochs": 200,
+      "batch_size": 512
+    },
+    "evaluator_kwargs": {
+      "filtered": true
+    }
+  }
+}

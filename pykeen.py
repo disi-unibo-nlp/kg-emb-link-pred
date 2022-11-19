@@ -6,8 +6,15 @@ from pykeen.pipeline import pipeline_from_path
 model_name = sys.argv[1]
 dataset_name = sys.argv[2]
 
+config_path = "/home/ferrari/kge_pykeen/config/"+model_name.lower()+"_"+dataset_name.lower()
+
+if os.path.isfile(config_path+".yaml"):
+  config_path = config_path+".yaml"
+else:
+  config_path = config_path+".json"
+
 result = pipeline_from_path(
-  path = "./config/"+model_name.lower()+"_"+dataset_name.lower()+".json",
+  path = config_path,
   # other kargs
   device="cuda",
   use_tqdm=True,

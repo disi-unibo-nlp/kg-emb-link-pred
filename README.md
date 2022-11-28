@@ -44,6 +44,7 @@ Install PyKeen, with the wandb and plotting extension:
 pip install pykeen[wandb, plotting]
 ```
 N.B. For other options see https://pykeen.readthedocs.io/en/stable/installation.html
+
 N.B. Before using wandb it is necessary to login. 
 
 For testing on ogb 

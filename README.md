@@ -23,16 +23,39 @@ pip install torch-geometric
 python train_ogb.py --wanb_log
 ```
 
-## Train and test TransE, RotatE, DistMult, ComplEx, ConvE, ConvKB, CompGCN and NodePiece
-
-```
-python pykeen.py <model_name> <dataset_name>
-```
 
 ## Train and test QuatE and DualE
 
 ```
 python pykg2vec.py <model_name> <dataset_name>
+```
+
+
+## Install requirements for PyKeen
+All the code has been tested with `python=3.8.13`
+
+Install the correct pytorch version (i.e., the ones compatible with your cuda device). For instance:
+```
+conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.6 -c pytorch -c conda-forge
+```
+
+Install PyKeen, with the wandb and plotting extension:
+```
+pip install pykeen[wandb, plotting]
+```
+N.B. For other options see https://pykeen.readthedocs.io/en/stable/installation.html
+N.B. Before using wandb it is necessary to login. 
+
+For testing on ogb 
+```
+conda install -c conda-forge ogb
+```
+
+
+## Train and test TransE, RotatE, DistMult, ComplEx, ConvE, ConvKB, CompGCN and NodePiece
+
+```
+python pykeen.py <model_name> <dataset_name>
 ```
 
 ## License
